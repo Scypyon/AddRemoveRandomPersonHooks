@@ -2,7 +2,7 @@ import React from "react";
 import "./index.css";
 
 const Person = props => {
-  const { name, email, picture, dob, login } = props.store;
+  const { name, email, picture, dob, login } = props.users;
   const { click } = props;
   return (
     <div className="person">

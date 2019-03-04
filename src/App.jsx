@@ -1,19 +1,19 @@
 import React, { useEffect, useReducer } from "react";
 import Person from "./components/Person/index";
 
-const reducer = (store, action) => {
+const reducer = (users, action) => {
   switch (action.type) {
     case "addPerson":
-      return [...store, action.store];
+      return [...users, ...action.users];
     case "removePerson":
-      return [...action.store];
+      return [...action.users];
     default:
-      return store;
+      return users;
   }
 };
 
 function App() {
-  const [store, dispatch] = useReducer(reducer, []);
+  const [users, dispatch] = useReducer(reducer, []);
 
   useEffect(() => {
     addPerson();
@@ -22,23 +22,21 @@ function App() {
   const addPerson = () => {
     fetch("https://randomuser.me/api/?results=1")
       .then(response => response.json())
-      .then(data => dispatch({ store: data.results, type: "addPerson" }));
+      .then(data => dispatch({ users: data.results, type: "addPerson" }));
   };
 
-  const removePerson = i => {
-    const tempstore = [...store];
-    tempstore.forEach((task, id) => {
-      if (task[0].login.uuid === i) tempstore.splice(id, 1);
-      dispatch({ store: tempstore, type: "removePerson" });
-    });
+  const removePerson = id => {
+    const filteredUsers = users.filter(user => user.login.uuid !== id);
+    dispatch({ users: filteredUsers, type: "removePerson" });
   };
-  const users = store.map((task, key) => (
-    <Person click={removePerson} key={key} store={task[0]} />
+
+  const user = users.map((task, key) => (
+    <Person click={removePerson} key={key} users={task} />
   ));
   return (
     <>
       <button onClick={addPerson}>Dodaj osobę</button>
-      {users}
+      {user}
     </>
   );
 }
